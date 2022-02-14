@@ -26,6 +26,7 @@ set ttyfast                 " Speed up scrolling in Vim
 " mappings
 "
 nmap <F5> :!./run<Enter>
+nnoremap <silent><C-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 "copy and paste
 " copy (write) highlighted text to .vimbuffer
