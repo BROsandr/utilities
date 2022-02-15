@@ -3,7 +3,6 @@ set showmatch               " show matching
 set ignorecase              " case insensitive 
 set hlsearch                " highlight search 
 set incsearch               " incremental search
-colorscheme desert
 set guicursor+=n-v-c:blinkon1
 set tabstop=4               " number of columns occupied by a tab 
 set termguicolors
@@ -53,3 +52,6 @@ Plug 'https://github.com/LucHermitte/lh-vim-lib.git'
 call plug#end()
 
 let b:usemarks         = 0
+hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
+hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
+
