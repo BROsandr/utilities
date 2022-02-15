@@ -38,6 +38,7 @@ nnoremap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 "copy and paste
 " copy (write) highlighted text to .vimbuffer
 vmap <C-c> y:new ~/.config/nvim/.vimbuffer<CR>VGp:x<CR> \| :!cat  ~/.config/nvim/.vimbuffer \| clip.exe <CR><CR>
+nmap <silent><Tab> :call CocActionAsync('doHover')<Enter>
 
 call plug#begin()
 
