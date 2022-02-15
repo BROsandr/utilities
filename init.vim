@@ -42,10 +42,7 @@ call plug#begin()
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
-" clang configuration
-let g:clang_library_path='mnt/d/programs/Visual/VC/Tools/Llvm/x64/lib/libclang.lib'
-let g:clang_complete_auto = 1
-let g:clang_complete_copen = 1
