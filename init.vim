@@ -53,6 +53,6 @@ Plug 'https://github.com/LucHermitte/lh-vim-lib.git'
 call plug#end()
 
 let b:usemarks         = 0
-hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
-hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
-
+" hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
+" hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
+colorscheme darkblue
