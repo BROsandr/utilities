@@ -3,7 +3,10 @@ set showmatch               " show matching
 set ignorecase              " case insensitive 
 set hlsearch                " highlight search 
 set incsearch               " incremental search
+colorscheme desert
+set guicursor+=n-v-c:blinkon1
 set tabstop=4               " number of columns occupied by a tab 
+set termguicolors
 "set mouse=v                 " middle-click paste with
 set softtabstop=4           " see multiple spaces as tabstops so <BS> does the right thing
 "set expandtab               " converts tabs to white space
@@ -26,9 +29,9 @@ set smarttab
 "
 " mappings
 "
-nmap <F5> :!./run<Enter>
+nmap <F5> :terminal ./run<Enter>
 " Ctrl-j/k deletes blank line below/above, and Alt-j/k inserts.
-nnoremap <silent><C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
+" nnoremap <silent><C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
 nnoremap <silent><C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
 nnoremap <silent><A-j> :set paste<CR>m`o<Esc>``:set nopaste<CR>
 nnoremap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
@@ -43,6 +46,10 @@ Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'sheerun/vim-polyglot'
+Plug 'https://github.com/LucHermitte/lh-brackets.git'
+Plug 'https://github.com/LucHermitte/lh-vim-lib.git'
 
 call plug#end()
 
+let b:usemarks         = 0
