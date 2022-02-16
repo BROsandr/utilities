@@ -59,3 +59,5 @@ let b:usemarks         = 0
 " hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
 " hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
 colorscheme darkblue
+autocmd TermOpen * setlocal nonumber norelativenumber
+:tnoremap <Esc> <C-\><C-n>
