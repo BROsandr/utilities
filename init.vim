@@ -49,6 +49,9 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
 Plug 'https://github.com/LucHermitte/lh-brackets.git'
 Plug 'https://github.com/LucHermitte/lh-vim-lib.git'
+Plug 'scrooloose/nerdtree'
+Plug 'https://github.com/ctrlpvim/ctrlp.vim.git'
+" Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
 
