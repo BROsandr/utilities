@@ -60,5 +60,4 @@ let b:usemarks         = 0
 colorscheme darkblue
 autocmd TermOpen * setlocal nonumber norelativenumber
 :tnoremap <Esc> <C-\><C-n>
-set cin - "включим отступы в стиле Си
-set lz — "ленивая перерисовка экрана при выполнении скриптов
+set cin  "включим отступы в стиле Си
