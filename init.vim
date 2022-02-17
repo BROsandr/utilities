@@ -49,6 +49,7 @@ Plug 'https://github.com/LucHermitte/lh-brackets.git'
 Plug 'https://github.com/LucHermitte/lh-vim-lib.git'
 Plug 'scrooloose/nerdtree'
 Plug 'https://github.com/ctrlpvim/ctrlp.vim.git'
+Plug 'tpope/vim-fugitive'
 " Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
@@ -57,6 +58,7 @@ let b:usemarks         = 0
 " hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
 " hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
 colorscheme darkblue
-autocmd TermOpen * setlocal nonumber norelativenumber
-:tnoremap <Esc> <C-\><C-n>
+" autocmd TermOpen * setlocal nonumber norelativenumber
+tnoremap <Esc> <C-\><C-n>
 set cin  "включим отступы в стиле Си
+" set signcolumn=auto:9
