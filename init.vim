@@ -10,7 +10,7 @@ set termguicolors
 set softtabstop=4           " see multiple spaces as tabstops so <BS> does the right thing
 set shiftwidth=4            " width for autoindents
 set autoindent              " indent a new line the same amount as the line just typed
-set number                  " add line numbers
+set relativenumber                  " add line numbers
 set wildmode=list:longest,list:full   " get bash-like tab completions
 "set cc=180                  " set an 80 column border for good coding style
 filetype plugin indent on   "allow auto-indenting depending on file type
@@ -29,10 +29,10 @@ set smarttab
 "
 nmap <F5> :terminal ./run<Enter>
 " Ctrl-j/k deletes blank line below/above, and Alt-j/k inserts.
-" nnoremap <silent><C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
-nnoremap <silent><C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
-nnoremap <silent><A-j> :set paste<CR>m`o<Esc>``:set nopaste<CR>
-nnoremap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
+" nmap <silent><C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
+nmap <silent><C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
+nmap <silent><A-j> :set paste<CR>m`o<Esc>``:set nopaste<CR>
+nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 "copy and paste
 " copy (write) highlighted text to .vimbuffer
@@ -59,6 +59,5 @@ let b:usemarks         = 0
 " hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
 colorscheme darkblue
 " autocmd TermOpen * setlocal nonumber norelativenumber
-tnoremap <Esc> <C-\><C-n>
 set cin  "включим отступы в стиле Си
 " set signcolumn=auto:9
