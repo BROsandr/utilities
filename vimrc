@@ -1,5 +1,3 @@
-" This file is supposed to be loaded by VSVim - visual studio extension
-
 set clipboard=unnamedplus
 set hlsearch
 set ignorecase
@@ -44,7 +42,7 @@ vmap <Leader>f :vsc Edit.FormatSelection<CR>
 imap <C-W> <C-O>:vsc Edit.WordDeleteToStart<CR>
 nmap gf :vsc Edit.GoToAll<CR>
 nmap gi :vsc View.ShowSmartTag<CR>
-map gcc :vsc Edit.ToggleLineComment<CR>
+map gc :vsc Edit.ToggleLineComment<CR>
 nmap <Leader>s :vsc Debug.StepInto<CR>
 nmap <Leader>o :vsc Debug.StepOut<CR>
 nmap <Leader>n :vsc Debug.StepOver<CR>
@@ -62,3 +60,5 @@ nmap <Leader>n :vsc Debug.StepOver<CR>
 
 " " Do something different depending on the value of b:w00t
 " inoremap <expr> o exists('b:w00t') ? '0' : 'o'
+nmap <Leader>t :vsc EditorContextMenus.CodeWindow.ToggleHeaderCodeFile<CR>
+nmap <Leader>c :vsc File.Close<CR>
