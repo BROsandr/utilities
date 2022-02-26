@@ -28,7 +28,7 @@ set smarttab
 "
 " mappings
 "
-nmap <F5> :terminal ./run<Enter>
+nmap <F5> :terminal .\run.py<Enter>
 " Ctrl-j/k deletes blank line below/above, and Alt-j/k inserts.
 " nmap <silent><C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
 " nmap <silent><C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
