@@ -48,7 +48,7 @@ int main()
     add_edge(Rick, Margaret, g);
     add_edge(John, Benjamin, g);
 
-    graph_traits< adjacency_list<> >::vertex_iterator i, end;
+    graph_traits< Graph >::vertex_iterator i, end;
     // // property_map< adjacency_list<>, vertex_index_t >::type index_map
     // //     = get(vertex_index, g);
 
