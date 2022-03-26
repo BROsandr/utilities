@@ -1,0 +1,11 @@
+--- /mnt/c/Code/c++/lemon-1.3.1/lemon/adaptors.h	2022-03-21 20:35:23.643112200 +0300
++++ /mnt/c/programs/lemon/include/lemon/adaptors.h	2022-03-26 19:03:19.619171400 +0300
+@@ -38,7 +38,7 @@
+ namespace lemon {
+ 
+ #ifdef _MSC_VER
+-#define LEMON_SCOPE_FIX(OUTER, NESTED) OUTER::NESTED
++#define LEMON_SCOPE_FIX(OUTER, NESTED) typename OUTER::NESTED
+ #else
+ #define LEMON_SCOPE_FIX(OUTER, NESTED) typename OUTER::template NESTED
+ #endif
