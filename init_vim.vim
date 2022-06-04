@@ -11,12 +11,10 @@ augroup highlight_yank
     autocmd!
     au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=700})
 augroup END
-"set mouse=v                 " middle-click paste with
 set softtabstop=4           " see multiple spaces as tabstops so <BS> does the right thing
 set shiftwidth=4            " width for autoindents
 set autoindent              " indent a new line the same amount as the line just typed
 set number                  " add line numbers
-" set wildmode=list:longest,list:full   " get bash-like tab completions
 set wildmenu
 "set cc=180                  " set an 80 column border for good coding style
 filetype plugin indent on   "allow auto-indenting depending on file type
@@ -27,9 +25,6 @@ filetype plugin on
 set cursorline              " highlight current cursorline
 set ttyfast                 " Speed up scrolling in Vim
 set smarttab
-" set spell                 " enable spell check (may need to download language package)
-" set noswapfile            " disable creating swap file
-" set backupdir=~/.cache/vim " Directory to store backup files.i
 "
 " mappings
 "
@@ -92,47 +87,8 @@ let b:usemarks         = 0
 " hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
 " hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
 colorscheme darkblue
-" autocmd TermOpen * setlocal nonumber norelativenumber
 set cin  "включим отступы в стиле Си
-" set signcolumn=auto:9
-"
-"
-"
-" Mappings for coc.nvim
-"
-" Use <c-space> to trigger completion.
-" if has('nvim')
-"   inoremap <silent><expr> <c-space> coc#refresh()
-" else
-"   inoremap <silent><expr> <c-@> coc#refresh()
-" endif
 
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-" nmap <silent> [g <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" " GoTo code navigation.
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
-
-" " Use K to show documentation in preview window.
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" function! s:show_documentation()
-"   if (index(['vim','help'], &filetype) >= 0)
-"     execute 'h '.expand('<cword>')
-"   elseif (coc#rpc#ready())
-"     call CocActionAsync('doHover')
-"   else
-"     execute '!' . &keywordprg . " " . expand('<cword>')
-"   endif
-" endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-" autocmd CursorHold * silent call CocActionAsync('highlight')
 set backupcopy=yes
 let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 let g:indent_guides_enable_on_vim_startup = 1
@@ -152,6 +108,10 @@ nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 " List contents of all registers (that typically contain pasteable text).
 nnoremap <silent> "" :registers "0123456789abcdefghijklmnopqrstuvwxyz*+.<CR>
 
+if has('persistent_undo')      "check if your vim version supports it
+  set undofile                 "turn on the feature  
+  set undodir=$HOME/.vim/undo  "directory where the undo files will be stored
+  endif  
 
 set completeopt=menu,menuone,noselect,preview
 " autocmd Filetype cpp setlocal omnifunc=v:lua.vim.lsp.omnifunc
