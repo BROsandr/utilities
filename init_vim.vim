@@ -37,6 +37,8 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'ldelossa/litee.nvim'
+Plug 'ldelossa/litee-calltree.nvim'
 Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
 Plug 'j-hui/fidget.nvim'
 Plug 'https://github.com/jubnzv/virtual-types.nvim.git'
@@ -217,7 +219,7 @@ lua <<EOF
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig').ccls.setup {
+  require('lspconfig').clangd.setup {
     capabilities = capabilities,
     on_attach = on_attach
   }
@@ -380,10 +382,14 @@ nnoremap <silent> gs :Lspsaga signature_help<CR>
 nnoremap <silent> gpd :Lspsaga preview_definition<CR>
 nnoremap <silent> <A-d> :Lspsaga open_floaterm<CR>
 tnoremap <silent> <A-d> <C-\><C-n>:Lspsaga close_floaterm<CR>
-lua require('lspconfig').ccls.setup{on_attach=require'virtualtypes'.on_attach}
+lua require('lspconfig').clangd.setup{on_attach=require'virtualtypes'.on_attach}
 lua << EOF
 require("lsp_lines").register_lsp_virtual_lines()
 vim.diagnostic.config({
   virtual_text = false,
 })
+require('litee.lib').setup({})
+require('litee.calltree').setup({})
 EOF
+nnoremap <silent> <leader>gc    <cmd>lua vim.lsp.buf.incoming_calls()<CR>
+nnoremap <silent> <leader>gC    <cmd>lua vim.lsp.buf.outgoing_calls()<CR>
