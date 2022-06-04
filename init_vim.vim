@@ -37,7 +37,9 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
-Plug 'https://github.com/onsails/lspkind.nvim.git'
+Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
+Plug 'j-hui/fidget.nvim'
+Plug 'https://github.com/jubnzv/virtual-types.nvim.git'
 Plug 'https://github.com/tami5/lspsaga.nvim.git'
 Plug 'https://github.com/neovim/nvim-lspconfig.git'
 " Plug 'puremourning/vimspector' 
@@ -86,6 +88,7 @@ lua << EOF
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
   }
+  require"fidget".setup{}
 EOF
 let b:usemarks         = 0
 " hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
@@ -128,7 +131,6 @@ lua <<EOF
   -- Setup nvim-cmp.
   local cmp = require'cmp'
 
-  local lspkind = require('lspkind')
   cmp.setup({
     snippet = {
       -- REQUIRED - you must specify a snippet engine
@@ -144,18 +146,6 @@ lua <<EOF
       -- documentation = cmp.config.window.bordered(),
     },
 
-    formatting = {
-      format = lspkind.cmp_format({
-        mode = 'symbol', -- show only symbol annotations
-        maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-
-        -- The function below will be called before any actual modifications from lspkind
-        -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-        before = function (entry, vim_item)
-          return vim_item
-        end
-      })
-  },
     mapping = cmp.mapping.preset.insert({
       ['<C-b>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
@@ -208,8 +198,8 @@ lua <<EOF
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    --vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-    --vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
     vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
     vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
@@ -385,9 +375,15 @@ map(0, "n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", {silent = true, norem
 map(0, "n", "<C-u>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1, '<c-u>')<cr>", {})
 map(0, "n", "<C-d>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1, '<c-d>')<cr>", {})
 EOF
-nnoremap <silent> gh :Lspsaga lsp_finder<CR>
+nnoremap <silent> gf :Lspsaga lsp_finder<CR>
 nnoremap <silent> gs :Lspsaga signature_help<CR>
 nnoremap <silent> gpd :Lspsaga preview_definition<CR>
 nnoremap <silent> <A-d> :Lspsaga open_floaterm<CR>
 tnoremap <silent> <A-d> <C-\><C-n>:Lspsaga close_floaterm<CR>
-
+lua require('lspconfig').ccls.setup{on_attach=require'virtualtypes'.on_attach}
+lua << EOF
+require("lsp_lines").register_lsp_virtual_lines()
+vim.diagnostic.config({
+  virtual_text = false,
+})
+EOF
