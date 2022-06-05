@@ -37,11 +37,11 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'https://github.com/airblade/vim-gitgutter.git'
 Plug 'ldelossa/litee.nvim'
 Plug 'ldelossa/litee-calltree.nvim'
 Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
 Plug 'j-hui/fidget.nvim'
-Plug 'https://github.com/jubnzv/virtual-types.nvim.git'
 Plug 'https://github.com/tami5/lspsaga.nvim.git'
 Plug 'https://github.com/neovim/nvim-lspconfig.git'
 " Plug 'puremourning/vimspector' 
@@ -367,7 +367,7 @@ EOF
 lua << EOF
 --- In lsp attach function
 local map = vim.api.nvim_buf_set_keymap
-map(0, "n", "gr", "<cmd>Lspsaga rename<cr>", {silent = true, noremap = true})
+map(0, "n", "<leader>gr", "<cmd>Lspsaga rename<cr>", {silent = true, noremap = true})
 map(0, "n", "gx", "<cmd>Lspsaga code_action<cr>", {silent = true, noremap = true})
 map(0, "x", "gx", ":<c-u>Lspsaga range_code_action<cr>", {silent = true, noremap = true})
 map(0, "n", "K",  "<cmd>Lspsaga hover_doc<cr>", {silent = true, noremap = true})
@@ -377,12 +377,10 @@ map(0, "n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", {silent = true, norem
 map(0, "n", "<C-u>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1, '<c-u>')<cr>", {})
 map(0, "n", "<C-d>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1, '<c-d>')<cr>", {})
 EOF
-nnoremap <silent> gf :Lspsaga lsp_finder<CR>
 nnoremap <silent> gs :Lspsaga signature_help<CR>
 nnoremap <silent> gpd :Lspsaga preview_definition<CR>
 nnoremap <silent> <A-d> :Lspsaga open_floaterm<CR>
 tnoremap <silent> <A-d> <C-\><C-n>:Lspsaga close_floaterm<CR>
-lua require('lspconfig').clangd.setup{on_attach=require'virtualtypes'.on_attach}
 lua << EOF
 require("lsp_lines").register_lsp_virtual_lines()
 vim.diagnostic.config({
@@ -393,3 +391,4 @@ require('litee.calltree').setup({})
 EOF
 nnoremap <silent> <leader>gc    <cmd>lua vim.lsp.buf.incoming_calls()<CR>
 nnoremap <silent> <leader>gC    <cmd>lua vim.lsp.buf.outgoing_calls()<CR>
+highlight clear SignColumn
