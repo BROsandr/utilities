@@ -39,11 +39,8 @@ call plug#begin()
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'https://github.com/airblade/vim-gitgutter.git'
-Plug 'ldelossa/litee.nvim'
-Plug 'ldelossa/litee-calltree.nvim'
 Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
 Plug 'j-hui/fidget.nvim'
-Plug 'https://github.com/tami5/lspsaga.nvim.git'
 Plug 'https://github.com/neovim/nvim-lspconfig.git'
 " Plug 'puremourning/vimspector' 
 Plug 'https://github.com/mfussenegger/nvim-dap.git'
@@ -312,83 +309,12 @@ vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
 EOF
 
-lua << EOF
 
-local lspsaga = require 'lspsaga'
-lspsaga.setup { -- defaults ...
-  debug = false,
-  use_saga_diagnostic_sign = true,
-  -- diagnostic sign
-  error_sign = "",
-  warn_sign = "",
-  hint_sign = "",
-  infor_sign = "",
-  diagnostic_header_icon = "   ",
-  -- code action title icon
-  code_action_icon = " ",
-  code_action_prompt = {
-    enable = true,
-    sign = true,
-    sign_priority = 40,
-    virtual_text = true,
-  },
-  finder_definition_icon = "  ",
-  finder_reference_icon = "  ",
-  max_preview_lines = 10,
-  finder_action_keys = {
-    open = "o",
-    vsplit = "s",
-    split = "i",
-    quit = "q",
-    scroll_down = "<C-f>",
-    scroll_up = "<C-b>",
-  },
-  code_action_keys = {
-    quit = "q",
-    exec = "<CR>",
-  },
-  rename_action_keys = {
-    quit = "<C-c>",
-    exec = "<CR>",
-  },
-  definition_preview_icon = "  ",
-  border_style = "single",
-  rename_prompt_prefix = "➤",
-  rename_output_qflist = {
-    enable = false,
-    auto_open_qflist = false,
-  },
-  server_filetype_map = {},
-  diagnostic_prefix_format = "%d. ",
-  diagnostic_message_format = "%m %c",
-  highlight_prefix = false,
-}
-EOF
-
-lua << EOF
---- In lsp attach function
-local map = vim.api.nvim_buf_set_keymap
-map(0, "n", "<leader>gr", "<cmd>Lspsaga rename<cr>", {silent = true, noremap = true})
-map(0, "n", "gx", "<cmd>Lspsaga code_action<cr>", {silent = true, noremap = true})
-map(0, "x", "gx", ":<c-u>Lspsaga range_code_action<cr>", {silent = true, noremap = true})
-map(0, "n", "K",  "<cmd>Lspsaga hover_doc<cr>", {silent = true, noremap = true})
-map(0, "n", "go", "<cmd>Lspsaga show_line_diagnostics<cr>", {silent = true, noremap = true})
-map(0, "n", "gj", "<cmd>Lspsaga diagnostic_jump_next<cr>", {silent = true, noremap = true})
-map(0, "n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", {silent = true, noremap = true})
-map(0, "n", "<C-u>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1, '<c-u>')<cr>", {})
-map(0, "n", "<C-d>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1, '<c-d>')<cr>", {})
-EOF
-nnoremap <silent> gs :Lspsaga signature_help<CR>
-nnoremap <silent> gpd :Lspsaga preview_definition<CR>
-nnoremap <silent> <A-d> :Lspsaga open_floaterm<CR>
-tnoremap <silent> <A-d> <C-\><C-n>:Lspsaga close_floaterm<CR>
 lua << EOF
 require("lsp_lines").register_lsp_virtual_lines()
 vim.diagnostic.config({
   virtual_text = false,
 })
-require('litee.lib').setup({})
-require('litee.calltree').setup({})
 EOF
 nnoremap <silent> <leader>gc    <cmd>lua vim.lsp.buf.incoming_calls()<CR>
 nnoremap <silent> <leader>gC    <cmd>lua vim.lsp.buf.outgoing_calls()<CR>
