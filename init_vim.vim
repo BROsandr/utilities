@@ -37,6 +37,7 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'https://github.com/airblade/vim-gitgutter.git'
 Plug 'ldelossa/litee.nvim'
 Plug 'ldelossa/litee-calltree.nvim'
@@ -392,3 +393,31 @@ EOF
 nnoremap <silent> <leader>gc    <cmd>lua vim.lsp.buf.incoming_calls()<CR>
 nnoremap <silent> <leader>gC    <cmd>lua vim.lsp.buf.outgoing_calls()<CR>
 highlight clear SignColumn
+
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all"
+  ensure_installed = { "cpp"},
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  highlight = {
+    enable = true
+  },
+  indent = {
+    enable = true
+  },
+  incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = "gnn",
+        node_incremental = "grn",
+        scope_incremental = "grc",
+        node_decremental = "grm",
+      },
+    },
+  }
+
+
+EOF
