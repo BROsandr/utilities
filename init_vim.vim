@@ -37,6 +37,7 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'https://github.com/echasnovski/mini.nvim.git'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -325,7 +326,7 @@ highlight clear SignColumn
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
-  ensure_installed = { "cpp"},
+  ensure_installed = { "cpp", "c"},
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -398,4 +399,97 @@ require("dapui").setup({
     max_type_length = nil, -- Can be integer or nil.
   }
 })
+EOF
+
+lua << EOF
+  require"mini.cursorword".setup{
+  -- Delay (in ms) between when cursor moved and when highlighting appeared
+  delay = 100,
+  }
+  require"mini.bufremove".setup{
+  -- Whether to set Vim's settings for buffers (allow hidden buffers)
+  set_vim_settings = true,
+  }
+  require"mini.tabline".setup{
+  -- Whether to show file icons (requires 'kyazdani42/nvim-web-devicons')
+  show_icons = true,
+
+  -- Whether to set Vim's settings for tabline (make it always shown and
+  -- allow hidden buffers)
+  set_vim_settings = true,
+
+  -- Where to show tabpage section in case of multiple vim tabpages.
+  -- One of 'left', 'right', 'none'.
+  tabpage_section = 'left',
+  }
+  require"mini.indentscope".setup{
+    draw = {
+      -- Delay (in ms) between event and start of drawing scope indicator
+      delay = 100,
+
+      -- Animation rule for scope's first drawing. A function which, given next
+      -- and total step numbers, returns wait time (in ms). See
+      -- |MiniIndentscope.gen_animation()| for builtin options. To not use
+      -- animation, supply `require('mini.indentscope').gen_animation('none')`.
+      animation = require('mini.indentscope').gen_animation('none')
+    },
+
+  -- Module mappings. Use `''` (empty string) to disable one.
+  mappings = {
+    -- Textobjects
+    object_scope = 'ii',
+    object_scope_with_border = 'ai',
+
+    -- Motions (jump to respective border line; if not present - body line)
+    goto_top = '[i',
+    goto_bottom = ']i',
+  },
+
+  -- Options which control computation of scope. Buffer local values can be
+  -- supplied in buffer variable `vim.b.miniindentscope_options`.
+  options = {
+    -- Type of scope's border: which line(s) with smaller indent to
+    -- categorize as border. Can be one of: 'both', 'top', 'bottom', 'none'.
+    border = 'both',
+
+    -- Whether to use cursor column when computing reference indent. Useful to
+    -- see incremental scopes with horizontal cursor movements.
+    indent_at_cursor = true,
+
+    -- Whether to first check input line to be a border of adjacent scope.
+    -- Use it if you want to place cursor on function header to get scope of
+    -- its body.
+    try_as_border = false,
+  },
+
+  -- Which character to use for drawing scope indicator
+  symbol = '╎',
+  }
+  require"mini.sessions".setup{
+  -- Whether to read latest session if Neovim opened without file arguments
+  autoread = false,
+
+  -- Whether to write current session before quitting Neovim
+  autowrite = true,
+
+  -- Directory where global sessions are stored (use `''` to disable)
+  directory = '',
+
+  -- File for local session (use `''` to disable)
+  file = 'Session.vim',
+
+  -- Whether to force possibly harmful actions (meaning depends on function)
+  force = { read = false, write = true, delete = false },
+
+  -- Hook functions for actions. Default `nil` means 'do nothing'.
+  hooks = {
+    -- Before successful action
+    pre = { read = nil, write = nil, delete = nil },
+    -- After successful action
+    post = { read = nil, write = nil, delete = nil },
+  },
+
+  -- Whether to print session path after action
+  verbose = { read = false, write = true, delete = true },
+  }
 EOF
