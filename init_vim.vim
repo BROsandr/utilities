@@ -37,6 +37,8 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'https://github.com/dstein64/nvim-scrollview.git'
+Plug 'numToStr/FTerm.nvim'
 Plug 'https://github.com/echasnovski/mini.nvim.git'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
@@ -78,6 +80,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
+Plug 'https://github.com/m-pilia/vim-ccls.git'
 
 " For luasnip users.
 " Plug 'L3MON4D3/LuaSnip'
@@ -220,7 +223,7 @@ lua <<EOF
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig').clangd.setup {
+  require('lspconfig').ccls.setup {
     capabilities = capabilities,
     on_attach = on_attach
   }
@@ -473,7 +476,7 @@ lua << EOF
   autowrite = true,
 
   -- Directory where global sessions are stored (use `''` to disable)
-  directory = '',
+  directory = '/home/alex/code/mini_sessions',
 
   -- File for local session (use `''` to disable)
   file = 'Session.vim',
@@ -492,4 +495,55 @@ lua << EOF
   -- Whether to print session path after action
   verbose = { read = false, write = true, delete = true },
   }
+
+  require"mini.starter".setup{
+  -- Whether to open starter buffer on VimEnter. Not opened if Neovim was
+  -- started with intent to show something else.
+  autoopen = true,
+
+  -- Whether to evaluate action of single active item
+  evaluate_single = false,
+
+  -- Items to be displayed. Should be an array with the following elements:
+  -- - Item: table with <action>, <name>, and <section> keys.
+  -- - Function: should return one of these three categories.
+  -- - Array: elements of these three types (i.e. item, array, function).
+  -- If `nil` (default), default items will be used (see |mini.starter|).
+  items = nil,
+
+  -- Header to be displayed before items. Converted to single string via
+  -- `tostring` (use `\n` to display several lines). If function, it is
+  -- evaluated first. If `nil` (default), polite greeting will be used.
+  header = nil,
+
+  -- Footer to be displayed after items. Converted to single string via
+  -- `tostring` (use `\n` to display several lines). If function, it is
+  -- evaluated first. If `nil` (default), default usage help will be shown.
+  footer = nil,
+
+  -- Array  of functions to be applied consecutively to initial content.
+  -- Each function should take and return content for 'Starter' buffer (see
+  -- |mini.starter| and |MiniStarter.content| for more details).
+  content_hooks = nil,
+
+  -- Characters to update query. Each character will have special buffer
+  -- mapping overriding your global ones. Be careful to not add `:` as it
+  -- allows you to go into command mode.
+  query_updaters = 'abcdefghijklmnopqrstuvwxyz0123456789_-.',
+}
 EOF
+
+lua << EOF
+require'FTerm'.setup({
+    border = 'double',
+    dimensions  = {
+        height = 0.9,
+        width = 0.9,
+    },
+})
+
+vim.keymap.set('n', '<A-i>', '<CMD>lua require("FTerm").toggle()<CR>')
+vim.keymap.set('t', '<A-i>', '<C-\\><C-n><CMD>lua require("FTerm").toggle()<CR>')
+EOF
+
+lua vim.keymap.set('n', '<A-o>', '<CMD>ClangdSwitchSourceHeader<CR>')
