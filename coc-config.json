@@ -1,0 +1,50 @@
+{
+  "languageserver": {
+    "ccls": {
+      "command": "ccls",
+      "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+      "rootPatterns": [".ccls-root", "compile_commands.json"],
+      "initializationOptions": {
+        "cache": {
+          "directory": ".ccls-cache"
+        },
+		"highlight": { "lsRanges": true },
+        "client": {
+          "snippetSupport": true
+        }
+      },
+      "disableDiagnostics": true,
+      "disableCompletion": true,
+    }
+  },
+  "diagnostic.checkCurrentLine": true,
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "suggest.completionItemKindLabels": {
+    "function": "FUNCTION",
+    "method": "METHOD",
+    "variable": "VARIABLE",
+    "constant": "CONSTANT",
+    "struct": "STRUCT",
+    "class": "CLASS",
+    "interface": "INTERFACE",
+    "text": "TEXT",
+    "enum": "ENUM",
+    "enumMember": "ENUMMEMBER",
+    "module": "MODULE",
+    "color": "COLOR",
+    "property": "PROPERTY",
+    "field": "FIELD",
+    "unit": "UNIT",
+    "file": "FILE",
+    "value": "VALUE",
+    "event": "EVENT",
+    "folder": "FOLDER",
+    "keyword": "KEYWORD",
+    "snippet": "SNIPPET",
+    "operator": "OPERATOR",
+    "reference": "REFERENCE",
+    "typeParameter": "TYPEPARAMETER",
+    "default": "DEFAULT"
+  }
+} 
