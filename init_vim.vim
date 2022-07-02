@@ -20,9 +20,10 @@ set wildmenu
 filetype plugin indent on   "allow auto-indenting depending on file type
 syntax on                   " syntax highlighting
 set mouse=a                 " enable mouse click
-set clipboard=unnamedplus   " using system clipboard
+" set clipboard=unnamedplus   " using system clipboard
 filetype plugin on
 set cursorline              " highlight current cursorline
+autocmd VimEnter * hi CursorLine guibg=#181da3
 set ttyfast                 " Speed up scrolling in Vim
 set smarttab
 "
@@ -37,6 +38,8 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'liuchengxu/vista.vim'
+Plug 'mhinz/vim-startify'
 Plug 'https://github.com/romgrk/barbar.nvim.git'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -98,6 +101,9 @@ nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+lua << EOF
+require('telescope').setup{ defaults = { file_ignore_patterns = {"build", "cmake"} } }
+EOF
 
 " Vim Script
 " List contents of all registers (that typically contain pasteable text).
@@ -235,25 +241,31 @@ require("dapui").setup({
   -- Expand lines larger than the window
   -- Requires >= 0.7
   expand_lines = vim.fn.has("nvim-0.7"),
-  sidebar = {
-    -- You can change the order of elements in the sidebar
-    elements = {
-      -- Provide as ID strings or tables with "id" and "size" keys
-      {
-        id = "scopes",
-        size = 0.25, -- Can be float or integer > 1
+  -- Layouts define sections of the screen to place windows.
+  -- The position can be "left", "right", "top" or "bottom".
+  -- The size specifies the height/width depending on position.
+  -- Elements are the elements shown in the layout (in order).
+  -- Layouts are opened in order so that earlier layouts take priority in window sizing.
+  layouts = {
+    {
+      elements = {
+      -- Elements can be strings or table with id and size keys.
+        { id = "scopes", size = 0.25 },
+        "breakpoints",
+        "stacks",
+        "watches",
       },
-      { id = "breakpoints", size = 0.25 },
-      { id = "stacks", size = 0.25 },
-      { id = "watches", size = 00.25 },
+      size = 40,
+      position = "left",
     },
-    size = 40,
-    position = "left", -- Can be "left", "right", "top", "bottom"
-  },
-  tray = {
-    elements = { "repl", "console" },
-    size = 10,
-    position = "bottom", -- Can be "left", "right", "top", "bottom"
+    {
+      elements = {
+        "repl",
+        "console",
+      },
+      size = 10,
+      position = "bottom",
+    },
   },
   floating = {
     max_height = nil, -- These can be integers or a float between 0 and 1.
@@ -264,7 +276,7 @@ require("dapui").setup({
     },
   },
   windows = { indent = 1 },
-  render = { 
+  render = {
     max_type_length = nil, -- Can be integer or nil.
   }
 })
@@ -314,69 +326,69 @@ lua << EOF
   -- Which character to use for drawing scope indicator
   symbol = '╎',
   }
-  require"mini.sessions".setup{
-  -- Whether to read latest session if Neovim opened without file arguments
-  autoread = false,
+--  require"mini.sessions".setup{
+--  -- Whether to read latest session if Neovim opened without file arguments
+--  autoread = false,
+--
+--  -- Whether to write current session before quitting Neovim
+--  autowrite = true,
+--
+--  -- Directory where global sessions are stored (use `''` to disable)
+--  --directory = '/home/alex/code/mini_sessions',
+--
+--  -- File for local session (use `''` to disable)
+--  file = 'Session.vim',
+--
+--  -- Whether to force possibly harmful actions (meaning depends on function)
+--  force = { read = false, write = true, delete = false },
+--
+--  -- Hook functions for actions. Default `nil` means 'do nothing'.
+--  hooks = {
+--    -- Before successful action
+--    pre = { read = nil, write = nil, delete = nil },
+--    -- After successful action
+--    post = { read = nil, write = nil, delete = nil },
+--  },
+--
+--  -- Whether to print session path after action
+--  verbose = { read = false, write = true, delete = true },
+--  }
 
-  -- Whether to write current session before quitting Neovim
-  autowrite = true,
-
-  -- Directory where global sessions are stored (use `''` to disable)
-  directory = '/home/alex/code/mini_sessions',
-
-  -- File for local session (use `''` to disable)
-  file = 'Session.vim',
-
-  -- Whether to force possibly harmful actions (meaning depends on function)
-  force = { read = false, write = true, delete = false },
-
-  -- Hook functions for actions. Default `nil` means 'do nothing'.
-  hooks = {
-    -- Before successful action
-    pre = { read = nil, write = nil, delete = nil },
-    -- After successful action
-    post = { read = nil, write = nil, delete = nil },
-  },
-
-  -- Whether to print session path after action
-  verbose = { read = false, write = true, delete = true },
-  }
-
-  require"mini.starter".setup{
-  -- Whether to open starter buffer on VimEnter. Not opened if Neovim was
-  -- started with intent to show something else.
-  autoopen = true,
-
-  -- Whether to evaluate action of single active item
-  evaluate_single = false,
-
-  -- Items to be displayed. Should be an array with the following elements:
-  -- - Item: table with <action>, <name>, and <section> keys.
-  -- - Function: should return one of these three categories.
-  -- - Array: elements of these three types (i.e. item, array, function).
-  -- If `nil` (default), default items will be used (see |mini.starter|).
-  items = nil,
-
-  -- Header to be displayed before items. Converted to single string via
-  -- `tostring` (use `\n` to display several lines). If function, it is
-  -- evaluated first. If `nil` (default), polite greeting will be used.
-  header = nil,
-
-  -- Footer to be displayed after items. Converted to single string via
-  -- `tostring` (use `\n` to display several lines). If function, it is
-  -- evaluated first. If `nil` (default), default usage help will be shown.
-  footer = nil,
-
-  -- Array  of functions to be applied consecutively to initial content.
-  -- Each function should take and return content for 'Starter' buffer (see
-  -- |mini.starter| and |MiniStarter.content| for more details).
-  content_hooks = nil,
-
-  -- Characters to update query. Each character will have special buffer
-  -- mapping overriding your global ones. Be careful to not add `:` as it
-  -- allows you to go into command mode.
-  query_updaters = 'abcdefghijklmnopqrstuvwxyz0123456789_-.',
-}
+--  require"mini.starter".setup{
+--  -- Whether to open starter buffer on VimEnter. Not opened if Neovim was
+--  -- started with intent to show something else.
+--  autoopen = true,
+--
+--  -- Whether to evaluate action of single active item
+--  evaluate_single = false,
+--
+--  -- Items to be displayed. Should be an array with the following elements:
+--  -- - Item: table with <action>, <name>, and <section> keys.
+--  -- - Function: should return one of these three categories.
+--  -- - Array: elements of these three types (i.e. item, array, function).
+--  -- If `nil` (default), default items will be used (see |mini.starter|).
+--  items = nil,
+--
+--  -- Header to be displayed before items. Converted to single string via
+--  -- `tostring` (use `\n` to display several lines). If function, it is
+--  -- evaluated first. If `nil` (default), polite greeting will be used.
+--  header = nil,
+--
+--  -- Footer to be displayed after items. Converted to single string via
+--  -- `tostring` (use `\n` to display several lines). If function, it is
+--  -- evaluated first. If `nil` (default), default usage help will be shown.
+--  footer = nil,
+--
+--  -- Array  of functions to be applied consecutively to initial content.
+--  -- Each function should take and return content for 'Starter' buffer (see
+--  -- |mini.starter| and |MiniStarter.content| for more details).
+--  content_hooks = nil,
+--
+--  -- Characters to update query. Each character will have special buffer
+--  -- mapping overriding your global ones. Be careful to not add `:` as it
+--  -- allows you to go into command mode.
+--  query_updaters = 'abcdefghijklmnopqrstuvwxyz0123456789_-.',
+--}
 EOF
 
 lua << EOF
@@ -500,3 +512,42 @@ nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
 " Other:
 " :BarbarEnable - enables barbar (enabled by default)
 " :BarbarDisable - very bad command, should never be used
+"
+nnoremap <silent> <leader>gd <Cmd>CclsDerivedHierarchy<CR>
+
+function! NearestMethodOrFunction() abort
+  return get(b:, 'vista_nearest_method_or_function', '')
+endfunction
+
+set statusline+=%{NearestMethodOrFunction()}
+
+" By default vista.vim never run if you don't call it explicitly.
+"
+" If you want to show the nearest function in your statusline automatically,
+" you can add the following line to your vimrc
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+" How each level is indented and what to prepend.
+" This could make the display more compact or more spacious.
+" e.g., more compact: ["▸ ", ""]
+" Note: this option only works for the kind renderer, not the tree renderer.
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+
+" Executive used when opening vista sidebar without specifying it.
+" See all the avaliable executives via `:echo g:vista#executives`.
+let g:vista_default_executive = 'coc'
+
+" To enable fzf's preview window set g:vista_fzf_preview.
+" The elements of g:vista_fzf_preview will be passed as arguments to fzf#vim#with_preview()
+" For example:
+let g:vista_fzf_preview = ['right:50%']
+" Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
+let g:vista#renderer#enable_icon = 1
+
+" The default icons can't be suitable for all the filetypes, you can extend it as you wish.
+let g:vista#renderer#icons = {
+\   "function": "\uf794",
+\   "variable": "\uf71b",
+\  }
+nmap <silent> gp :call CocAction('jumpDefinition', 'vsplit')<CR>
+" autocmd BufReadPre,FileReadPre *.cpp,*.h,*.hpp Vista 
+" autocmd BufReadPre,FileReadPre  * if &buftype == "nofile" | wincmd p | endif
