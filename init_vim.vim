@@ -23,7 +23,7 @@ set mouse=a                 " enable mouse click
 " set clipboard=unnamedplus   " using system clipboard
 filetype plugin on
 set cursorline              " highlight current cursorline
-autocmd VimEnter * hi CursorLine guibg=#181da3
+autocmd VimEnter * hi CursorLine guibg=#403939
 set ttyfast                 " Speed up scrolling in Vim
 set smarttab
 "
@@ -38,11 +38,12 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
-Plug 'ellisonleao/gruvbox.nvim'
+Plug 'Yagua/nebulous.nvim'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'EdenEast/nightfox.nvim' " Vim-Plug
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'liuchengxu/vista.vim'
-Plug 'https://github.com/glepnir/dashboard-nvim.git'
-" Plug 'mhinz/vim-startify'
+Plug 'mhinz/vim-startify'
 Plug 'https://github.com/romgrk/barbar.nvim.git'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -103,8 +104,8 @@ EOF
 let b:usemarks         = 0
 " hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
 " hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
-set background=dark " or light if you want light mode
-colorscheme gruvbox
+" colorscheme nightfox
+
 set cin  "включим отступы в стиле Си
 
 set backupcopy=yes
@@ -204,32 +205,6 @@ lua <<EOF
       { name = 'cmdline' }
     })
   })
-
-
-function setup_document_highlight(client, bufnr)
-  local status_ok, highlight_supported = pcall(function()
-    return client.supports_method "textDocument/documentHighlight"
-  end)
-  if not status_ok or not highlight_supported then
-    return
-  end
-  local augroup_exist, _ = pcall(vim.api.nvim_get_autocmds, {
-    group = "lsp_document_highlight",
-  })
-  if not augroup_exist then
-    vim.api.nvim_create_augroup("lsp_document_highlight", {})
-  end
-  vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-    group = "lsp_document_highlight",
-    buffer = bufnr,
-    callback = vim.lsp.buf.document_highlight,
-  })
-  vim.api.nvim_create_autocmd("CursorMoved", {
-    group = "lsp_document_highlight",
-    buffer = bufnr,
-    callback = vim.lsp.buf.clear_references,
-  })
-end
 
   local on_attach = function(client, bufnr)
 
@@ -463,7 +438,6 @@ EOF
 lua << EOF
 vim.opt.list = true
 vim.opt.listchars:append("space:⋅")
-vim.opt.listchars:append("eol:↴")
 
 require("indent_blankline").setup {
     space_char_blankline = " ",
@@ -565,3 +539,90 @@ let g:vista#renderer#icons = {
 " autocmd BufReadPre,FileReadPre *.cpp,*.h,*.hpp Vista 
 " autocmd BufReadPre,FileReadPre  * if &buftype == "nofile" | wincmd p | endif
 
+let g:startify_bookmarks = [ {'c': '~/.config/nvim/init.vim'}, '~/.zshrc' ]
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  textobjects = {
+    lsp_interop = {
+      enable = true,
+      border = 'none',
+      peek_definition_code = {
+        ["<leader>df"] = "@function.outer",
+        ["<leader>dF"] = "@class.outer",
+      },
+    },
+    select = {
+      enable = true,
+
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
+
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+      },
+    },
+
+    swap = {
+          enable = true,
+          swap_next = {
+            ["<leader>a"] = "@parameter.inner",
+          },
+          swap_previous = {
+            ["<leader>A"] = "@parameter.inner",
+          },
+    },
+    move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            ["]m"] = "@function.outer",
+            ["]]"] = "@class.outer",
+          },
+          goto_next_end = {
+            ["]M"] = "@function.outer",
+            ["]["] = "@class.outer",
+          },
+          goto_previous_start = {
+            ["[m"] = "@function.outer",
+            ["[["] = "@class.outer",
+          },
+          goto_previous_end = {
+            ["[M"] = "@function.outer",
+            ["[]"] = "@class.outer",
+          },
+    },
+  },
+}
+EOF
+
+lua << EOF
+--Put this lines inside your vimrc to set the colorscheme
+require("nebulous").setup {
+  variant = "midnight",
+  disable = {
+    background = true,
+    endOfBuffer = false,
+    terminal_colors = false,
+  },
+  italic = {
+    comments   = false,
+    keywords   = true,
+    functions  = false,
+    variables  = true,
+  },
+  custom_colors = { -- this table can hold any group of colors with their respective values
+    LineNr = { fg = "#5BBBDA", bg = "NONE", style = "NONE" },
+    CursorLineNr = { fg = "#E1CD6C", bg = "NONE", style = "NONE" },
+
+    -- it is possible to specify only the element to be changed
+    TelescopePreviewBorder = { fg = "#A13413" },
+    LspDiagnosticsDefaultError = { bg = "#E11313" },
+    TSTagDelimiter = { style = "bold,italic" },
+  }
+}
+EOF
