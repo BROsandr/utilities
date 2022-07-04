@@ -38,6 +38,8 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'https://github.com/p00f/nvim-ts-rainbow.git'
+Plug 'rmagatti/goto-preview'
 Plug 'Yagua/nebulous.nvim'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'EdenEast/nightfox.nvim' " Vim-Plug
@@ -73,7 +75,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'scrooloose/nerdtree'
 " Plug 'https://github.com/ctrlpvim/ctrlp.vim.git'
 Plug 'tpope/vim-fugitive'
-Plug 'luochen1990/rainbow'
 Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -109,7 +110,6 @@ let b:usemarks         = 0
 set cin  "включим отступы в стиле Си
 
 set backupcopy=yes
-let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 " Find files using Telescope command-line sugar.
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -374,6 +374,14 @@ require'nvim-treesitter.configs'.setup {
         node_decremental = "gsd",
       },
     },
+      rainbow = {
+        enable = true,
+        -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+        extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+        max_file_lines = nil, -- Do not enable for files with more than n lines, int
+        -- colors = {}, -- table of hex strings
+        -- termcolors = {} -- table of colour name strings
+      }
   }
 
 
@@ -625,4 +633,11 @@ require("nebulous").setup {
     TSTagDelimiter = { style = "bold,italic" },
   }
 }
+EOF
+
+lua << EOF
+    require('goto-preview').setup {
+
+        default_mappings = true
+    }
 EOF
