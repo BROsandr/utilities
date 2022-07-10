@@ -38,6 +38,7 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'https://github.com/RRethy/vim-illuminate.git'
 Plug 'https://github.com/p00f/nvim-ts-rainbow.git'
 Plug 'rmagatti/goto-preview'
 Plug 'Yagua/nebulous.nvim'
@@ -226,23 +227,26 @@ lua <<EOF
     vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
     vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
+    require 'illuminate'.on_attach(client)
+    vim.api.nvim_set_keymap('n', '<a-n>', '<cmd>lua require"illuminate".next_reference{wrap=true}<cr>', {noremap=true})
+    vim.api.nvim_set_keymap('n', '<a-p>', '<cmd>lua require"illuminate".next_reference{reverse=true,wrap=true}<cr>', {noremap=true})
 
-    if client.server_capabilities.documentHighlightProvider then
-        vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-        vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_document_highlight" }
-        vim.api.nvim_create_autocmd("CursorHold", {
-            callback = vim.lsp.buf.document_highlight,
-            buffer = bufnr,
-            group = "lsp_document_highlight",
-            desc = "Document Highlight",
-        })
-        vim.api.nvim_create_autocmd("CursorMoved", {
-            callback = vim.lsp.buf.clear_references,
-            buffer = bufnr,
-            group = "lsp_document_highlight",
-            desc = "Clear All the References",
-        })
-    end
+--    if client.server_capabilities.documentHighlightProvider then
+--        vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
+--        vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_document_highlight" }
+--        vim.api.nvim_create_autocmd("CursorHold", {
+--            callback = vim.lsp.buf.document_highlight,
+--            buffer = bufnr,
+--            group = "lsp_document_highlight",
+--            desc = "Document Highlight",
+--        })
+--        vim.api.nvim_create_autocmd("CursorMoved", {
+--            callback = vim.lsp.buf.clear_references,
+--            buffer = bufnr,
+--            group = "lsp_document_highlight",
+--            desc = "Clear All the References",
+--        })
+--    end
   end
 
   -- Setup lspconfig.
@@ -486,7 +490,7 @@ nnoremap <silent>    <A-8> <Cmd>BufferGoto 8<CR>
 nnoremap <silent>    <A-9> <Cmd>BufferGoto 9<CR>
 nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
 " Pin/unpin buffer
-nnoremap <silent>    <A-p> <Cmd>BufferPin<CR>
+nnoremap <silent>    <leader><A-p> <Cmd>BufferPin<CR>
 " Close buffer
 nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
 " Wipeout buffer
