@@ -5,14 +5,16 @@ set ignorecase              " case insensitive
 set hlsearch                " highlight search 
 set incsearch               " incremental search
 set guicursor+=n-v-c:blinkon1
-set tabstop=4               " number of columns occupied by a tab 
+set tabstop=2               " number of columns occupied by a tab 
 set termguicolors
 augroup highlight_yank
     autocmd!
     au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=700})
 augroup END
-set softtabstop=4           " see multiple spaces as tabstops so <BS> does the right thing
-set shiftwidth=4            " width for autoindents
+set softtabstop=2           " see multiple spaces as tabstops so <BS> does the right thing
+set shiftwidth=2            " width for autoindents
+set expandtab
+set smartindent
 set autoindent              " indent a new line the same amount as the line just typed
 set number                  " add line numbers
 set wildmenu
@@ -38,6 +40,11 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'https://github.com/sakhnik/nvim-gdb.git'
+Plug 'https://github.com/romainl/vim-qf.git'
+Plug 'theHamsta/nvim-dap-virtual-text'
+Plug 'https://github.com/folke/tokyonight.nvim.git'
+Plug 'junegunn/fzf'
 Plug 'https://github.com/RRethy/vim-illuminate.git'
 Plug 'https://github.com/p00f/nvim-ts-rainbow.git'
 Plug 'rmagatti/goto-preview'
@@ -68,12 +75,12 @@ Plug 'https://github.com/neovim/nvim-lspconfig.git'
 " Plug 'puremourning/vimspector' 
 Plug 'https://github.com/mfussenegger/nvim-dap.git'
 Plug 'https://github.com/kshenoy/vim-signature.git'
-Plug 'vim-airline/vim-airline'
+Plug 'nvim-lualine/lualine.nvim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
-Plug 'scrooloose/nerdtree'
+Plug 'kyazdani42/nvim-tree.lua'
 " Plug 'https://github.com/ctrlpvim/ctrlp.vim.git'
 Plug 'tpope/vim-fugitive'
 Plug 'ryanoasis/vim-devicons'
@@ -106,7 +113,8 @@ EOF
 let b:usemarks         = 0
 " hi FgCocErrorFloatBgCocFloating guifg=#2e7c1d
 " hi FgCocWarningFloatBgCocFloating guifg=#00ff7f
-" colorscheme nightfox
+colorscheme tokyonight
+let g:codeschool_contrast_dark = "hard"
 
 set cin  "включим отступы в стиле Си
 
@@ -256,40 +264,56 @@ lua <<EOF
     capabilities = capabilities,
     on_attach = on_attach
   }
+  require('lspconfig').pyright.setup {
+    capabilities = capabilities,
+    on_attach = on_attach
+  }
 EOF
 
 lua << EOF
-  local dap = require('dap')
-  dap.adapters.lldb = {
-    type = 'executable',
-    command = '/usr/bin/lldb-vscode', -- adjust as needed, must be absolute path
-    name = 'lldb'
-  }
-  local dap = require('dap')
-  dap.configurations.cpp = {
+    local dap = require('dap')
+    dap.adapters.cppdbg = {
+      id = 'cppdbg',
+      type = 'executable',
+      command = '/home/alex/.local/cpptools/extension/debugAdapters/bin/OpenDebugAD7',
+    }
+local dap = require('dap')
+dap.configurations.cpp = {
   {
-    name = 'Launch',
-    type = 'lldb',
-    request = 'launch',
+    name = "Launch file",
+    type = "cppdbg",
+    request = "launch",
     program = function()
       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
     end,
     cwd = '${workspaceFolder}',
     stopOnEntry = false,
-    args = {},
-
-    -- 💀
-    -- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:
-    --
-    --    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-    --
-    -- Otherwise you might get the following error:
-    --
-    --    Error on launch: Failed to attach to the target process
-    --
-    -- But you should be aware of the implications:
-    -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
-    -- runInTerminal = false,
+    setupCommands = {  
+      { 
+         text = '-enable-pretty-printing',
+         description =  'enable pretty printing',
+         ignoreFailures = false 
+      },
+    },
+  },
+  {
+    name = 'Attach to gdbserver :1234',
+    type = 'cppdbg',
+    request = 'launch',
+    MIMode = 'gdb',
+    miDebuggerServerAddress = 'localhost:1234',
+    miDebuggerPath = '/usr/bin/gdb',
+    cwd = '${workspaceFolder}',
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    setupCommands = {  
+      { 
+         text = '-enable-pretty-printing',
+         description =  'enable pretty printing',
+         ignoreFailures = false 
+      },
+    },
   },
 }
 
@@ -330,7 +354,7 @@ dap.listeners.after['event_terminated']['me'] = function()
   keymap_restore = {}
 end
 EOF
-set makeprg=scons\ -j\ 8
+set makeprg=./run.py
 
 
 lua << EOF
@@ -358,7 +382,7 @@ highlight clear SignColumn
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
-  ensure_installed = { "cpp", "c"},
+  ensure_installed = { "cpp", "c", "python"},
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -445,6 +469,16 @@ require("dapui").setup({
     max_type_length = nil, -- Can be integer or nil.
   }
 })
+local dap, dapui = require("dap"), require("dapui")
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
 EOF
 
 lua << EOF
@@ -612,32 +646,32 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
-lua << EOF
---Put this lines inside your vimrc to set the colorscheme
-require("nebulous").setup {
-  variant = "midnight",
-  disable = {
-    background = true,
-    endOfBuffer = false,
-    terminal_colors = false,
-  },
-  italic = {
-    comments   = false,
-    keywords   = true,
-    functions  = false,
-    variables  = true,
-  },
-  custom_colors = { -- this table can hold any group of colors with their respective values
-    LineNr = { fg = "#5BBBDA", bg = "NONE", style = "NONE" },
-    CursorLineNr = { fg = "#E1CD6C", bg = "NONE", style = "NONE" },
+" lua << EOF
+" --Put this lines inside your vimrc to set the colorscheme
+" require("nebulous").setup {
+"   variant = "midnight",
+"   disable = {
+"     background = true,
+"     endOfBuffer = false,
+"     terminal_colors = false,
+"   },
+"   italic = {
+"     comments   = false,
+"     keywords   = true,
+"     functions  = false,
+"     variables  = true,
+"   },
+"   custom_colors = { -- this table can hold any group of colors with their respective values
+"     LineNr = { fg = "#5BBBDA", bg = "NONE", style = "NONE" },
+"     CursorLineNr = { fg = "#E1CD6C", bg = "NONE", style = "NONE" },
 
-    -- it is possible to specify only the element to be changed
-    TelescopePreviewBorder = { fg = "#A13413" },
-    LspDiagnosticsDefaultError = { bg = "#E11313" },
-    TSTagDelimiter = { style = "bold,italic" },
-  }
-}
-EOF
+"     -- it is possible to specify only the element to be changed
+"     TelescopePreviewBorder = { fg = "#A13413" },
+"     LspDiagnosticsDefaultError = { bg = "#E11313" },
+"     TSTagDelimiter = { style = "bold,italic" },
+"   }
+" }
+" EOF
 
 lua << EOF
     require('goto-preview').setup {
@@ -645,3 +679,25 @@ lua << EOF
         default_mappings = true
     }
 EOF
+lua << END
+require('lualine').setup()
+END
+
+lua << EOF
+    require("nvim-tree").setup()
+EOF
+
+nmap <A-t> :NvimTreeToggle<CR>
+
+lua << EOF
+    require("nvim-dap-virtual-text").setup()
+EOF
+
+nmap <leader>b :lua require'dap'.toggle_breakpoint()<CR>
+nmap <leader>c :lua require'dap'.continue()<CR>
+nmap <leader>n :lua require'dap'.step_over()<CR>
+nmap <leader>s :lua require'dap'.step_into()<CR>
+
+nmap <Home> <Plug>(qf_qf_previous)
+nmap <End>  <Plug>(qf_qf_next)
+nmap <F6> <Plug>(qf_qf_toggle)
