@@ -40,6 +40,8 @@ nmap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 call plug#begin()
 
+Plug 'SmiteshP/nvim-navic'
+Plug 'nvim-treesitter/nvim-treesitter-context'
 Plug 'https://github.com/sakhnik/nvim-gdb.git'
 Plug 'https://github.com/romainl/vim-qf.git'
 Plug 'theHamsta/nvim-dap-virtual-text'
@@ -255,6 +257,7 @@ lua <<EOF
 --            desc = "Clear All the References",
 --        })
 --    end
+    require"nvim-navic".attach(client, bufnr)
   end
 
   -- Setup lspconfig.
@@ -479,6 +482,9 @@ end
 dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close()
 end
+dap.listeners.before.disconnect["dapui_config"] = function() 
+    dapui.close()
+end
 EOF
 
 lua << EOF
@@ -549,17 +555,6 @@ nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
 "
 nnoremap <silent> <leader>gd <Cmd>CclsDerivedHierarchy<CR>
 
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
-
-set statusline+=%{NearestMethodOrFunction()}
-
-" By default vista.vim never run if you don't call it explicitly.
-"
-" If you want to show the nearest function in your statusline automatically,
-" you can add the following line to your vimrc
-" autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 " How each level is indented and what to prepend.
 " This could make the display more compact or more spacious.
 " e.g., more compact: ["▸ ", ""]
@@ -680,7 +675,13 @@ lua << EOF
     }
 EOF
 lua << END
-require('lualine').setup()
+require('lualine').setup({
+    sections = {
+        lualine_c = {
+            { require"nvim-navic".get_location, cond = require"nvim-navic".is_available },
+        }
+    }
+})
 END
 
 lua << EOF
@@ -697,6 +698,7 @@ nmap <leader>b :lua require'dap'.toggle_breakpoint()<CR>
 nmap <leader>c :lua require'dap'.continue()<CR>
 nmap <leader>n :lua require'dap'.step_over()<CR>
 nmap <leader>s :lua require'dap'.step_into()<CR>
+nmap <leader>t :DapTerminate<CR>
 
 nmap <Home> <Plug>(qf_qf_previous)
 nmap <End>  <Plug>(qf_qf_next)
